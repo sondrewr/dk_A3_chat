@@ -89,6 +89,7 @@ public class SimpleTcpClient {
      * @return True on success, false otherwise
      */
     private boolean closeConnection() {
+        // TODO - implement this method
         return false;
     }
 
