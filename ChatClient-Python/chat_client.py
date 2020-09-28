@@ -15,7 +15,8 @@ states = [
     "authorized"  # Connected and authorized (logged in)
 ]
 TCP_PORT = 1300  # TCP port used for communication
-SERVER_HOST = "localhost"  # Set this to either hostname (domain) or IP address of the chat server
+SERVER_HOST = "datakomm.work"  # Set this to either hostname (domain) or IP address of the chat server
+#Using provided server as stated in documentation
 
 # --------------------
 # State variables
@@ -25,7 +26,7 @@ current_state = "disconnected"  # The current state of the system
 must_run = True
 # Use this variable to create socket connection to the chat server
 # Note: the "type: socket" is a hint to PyCharm about the type of values we will assign to the variable
-client_socket = None  # type: socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # type: socket
 
 
 def quit_application():
@@ -87,7 +88,7 @@ def connect_to_server():
 
     # TODO Step 1: implement connection establishment
     # Hint: create a socket, connect, handle exceptions, then change current_state accordingly
-
+    
     # TODO Step 3: switch to sync mode
     # Hint: send the sync command according to the protocol
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
