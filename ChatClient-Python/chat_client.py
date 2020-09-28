@@ -26,6 +26,8 @@ current_state = "disconnected"  # The current state of the system
 must_run = True
 # Use this variable to create socket connection to the chat server
 # Note: the "type: socket" is a hint to PyCharm about the type of values we will assign to the variable
+#AF_INET designates the types of adresses the socket can communicate with, INET represent the IPv4
+#SOCK_STREAM means connection oriented TCP protocol.
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # type: socket
 
 
@@ -55,7 +57,7 @@ def send_command(command, arguments):
 def read_one_line(sock):
     """
     Read one line of text from a socket
-    :param sock: The socket to read from.
+    :param sock: The socket to read from
     :return:
     """
     newline_received = False
