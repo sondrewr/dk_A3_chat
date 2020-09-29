@@ -97,6 +97,7 @@ def connect_to_server():
     try:
         client_socket.connect(SERVER_HOST,TCP_PORT)
     
+    # gai = get adress info
     except socket.gaierror as err:
         print ("There was an error resolving the host" + str(err))
         
