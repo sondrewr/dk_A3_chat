@@ -4,6 +4,8 @@
 
 from socket import *
 
+import sys
+
 
 # --------------------
 # Constants
@@ -87,10 +89,18 @@ def connect_to_server():
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
     global client_socket
     global current_state
-
+    global SERVER_HOST
+    global TCP_PORT
+    
     # TODO Step 1: implement connection establishment
     # Hint: create a socket, connect, handle exceptions, then change current_state accordingly
+    try:
+        client_socket.connect(SERVER_HOST,TCP_PORT)
     
+    except socket.gaierror as err:
+        print ("There was an error resolving the host" + str(err))
+        
+        
     # TODO Step 3: switch to sync mode
     # Hint: send the sync command according to the protocol
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
