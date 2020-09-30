@@ -2,7 +2,7 @@
 # A Chat Client application. Used in the course IELEx2001 Computer networks, NTNU
 #################################################################################
 
-from socket import *
+import socket
 
 import sys
 
@@ -16,8 +16,8 @@ states = [
     "connected",  # Connected to a chat server, but not authorized (not logged in)
     "authorized"  # Connected and authorized (logged in)
 ]
-TCP_PORT = 1300  # TCP port used for communication
-SERVER_HOST = "datakomm.work"  # Set this to either hostname (domain) or IP address of the chat server
+TCP_PORT: int = 1300  # TCP port used for communication
+SERVER_HOST: str = "datakomm.work"  # Set this to either hostname (domain) or IP address of the chat server
 # Using provided server as stated in documentation
 
 # --------------------
@@ -30,7 +30,8 @@ must_run = True
 # Note: the "type: socket" is a hint to PyCharm about the type of values we will assign to the variable
 #AF_INET designates the types of adresses the socket can communicate with, INET represent the IPv4
 #SOCK_STREAM means connection oriented TCP protocol.
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # type: socket
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  #type: socket
 
 
 def quit_application():
@@ -94,12 +95,16 @@ def connect_to_server():
     
     # TODO Step 1: implement connection establishment
     # Hint: create a socket, connect, handle exceptions, then change current_state accordingly
+
     try:
-        client_socket.connect(SERVER_HOST,TCP_PORT)
-    
-    # gai = get adress info
-    except socket.gaierror as err:
+        client_socket.connect((SERVER_HOST,TCP_PORT))
+        
+    except socket.gaierror as err:  # gai = get adress info
         print ("There was an error resolving the host" + str(err))
+   
+    
+
+       
         
         
     # TODO Step 3: switch to sync mode
