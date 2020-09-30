@@ -3,7 +3,6 @@
 #################################################################################
 
 import socket
-
 import sys
 
 
@@ -98,6 +97,7 @@ def connect_to_server():
 
     try:
         client_socket.connect((SERVER_HOST,TCP_PORT))
+        current_state = states[2]
         
     except socket.gaierror as err:  # gai = get adress info
         print ("There was an error resolving the host" + str(err))
