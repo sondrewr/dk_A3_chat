@@ -42,6 +42,9 @@ def quit_application():
 
 
 def send_command(command, arguments):
+    global client_socket
+    
+    
     """
     Send one command to the chat server.
     :param command: The command to send (login, sync, msg, ...(
@@ -49,7 +52,7 @@ def send_command(command, arguments):
         (username, message text, etc)
     :return:
     """
-    global client_socket
+    
     # TODO: Implement this (part of step 3)
     # Hint: concatenate the command and the arguments
     # Hint: remember to send the newline at the end
@@ -102,16 +105,14 @@ def connect_to_server():
     except socket.gaierror as err:  # gai = get adress info
         print ("There was an error resolving the host" + str(err))
    
-    
-
-       
-        
         
     # TODO Step 3: switch to sync mode
     # Hint: send the sync command according to the protocol
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
     # to the server
-
+    
+    
+    
     # TODO Step 4: wait for the servers response and find out whether the switch to SYNC mode was successful
     # Hint: implement the get_servers_response function first - it should wait for one response command from the server
     # and return the server's response (we expect "modeok" response here). This get_servers_response() function
@@ -119,13 +120,21 @@ def connect_to_server():
     print("CONNECTION NOT IMPLEMENTED!")
 
 
+
 def disconnect_from_server():
+    global client_socket
+    global current_state  
+    
     # TODO Step 2: Implement disconnect
     # Hint: close the socket, handle exceptions, update current_state accordingly
-
+    try:
+        client_socket.close
+        current_state = states[1]
+    except socket.error as errd:
+        print("There was an error disconnecting from the server" + errd)
+    
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
-    global client_socket
-    global current_state
+
     pass
 
 
