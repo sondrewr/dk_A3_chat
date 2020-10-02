@@ -47,13 +47,25 @@ def send_command(command, arg):
     if command == "msg":    #Checks command, using argument as message thereafter encodes it and sends it along with the new line character.
         if arg != "" or " ":
          message = arg.encode()
-         client_socket.send(message + "/n")
+         client_socket.send(message + "\n")
         else:
-            print("The message cant be empty, please fill it inn")
+            print("The message cannot be empty, please fill it inn")
          
     elif command == "sync":
+        if arg == "on":
+            client_socket.send("sync\n")
+        elif arg == "off":
+            client_socket.send("async\n")
+        else:
+            print("\"on\" or \"off\" only") 
         
     elif command == "async":
+        if arg == "on":
+            client_socket.send("async\n")
+        elif arg == "off":
+            client_socket.send("sync\n")
+        else:
+            print("on or off only")
         
     elif command == "login":
         
