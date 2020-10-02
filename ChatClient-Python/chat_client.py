@@ -45,9 +45,11 @@ def send_command(command, arg):
     global client_socket
     
     if command == "msg":    #Checks command, using argument as message thereafter encodes it and sends it along with the new line character.
-        if arg != "":
+        if arg != "" or " ":
          message = arg.encode()
          client_socket.send(message + "/n")
+        else:
+            print("The message cant be empty, please fill it inn")
          
     elif command == "sync":
         
