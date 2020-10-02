@@ -65,7 +65,7 @@ def send_command(command, arg):
         elif arg == "off":
             client_socket.send("sync\n")
         else:
-            print("on or off only")
+            print("\"on\" or \"off\" only")
         
     elif command == "login":
         
