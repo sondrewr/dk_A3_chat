@@ -41,10 +41,28 @@ def quit_application():
     must_run = False
 
 
-def send_command(command, arguments):
+def send_command(command, arg):
     global client_socket
     
-    
+    if command == "msg":    #Checks command, using argument as message thereafter encodes it and sends it along with the new line character.
+        if arg != "":
+         message = arg.encode()
+         client_socket.send(message + "/n")
+         
+    elif command == "sync":
+        
+    elif command == "async":
+        
+    elif command == "login":
+        
+    elif command == "privmsg":
+        
+    elif command == "inbox":
+        
+    elif command == "help":
+        
+    else:
+        print("Command not supported")
     """
     Send one command to the chat server.
     :param command: The command to send (login, sync, msg, ...(
