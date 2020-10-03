@@ -115,17 +115,10 @@ def get_servers_response():
     Wait until a response command is received from the server
     :return: The response of the server, the whole line as a single string
     """
-    response_received = False
-    message = ""
-    while not response_received:
-        character = sock.recv(1).decode()
-        if character == '\n':
-            response_received = True
-        elif character == '\r':
-            pass
-        else:
-            message += character
-    return message
+    global client_socket
+    response = read_one_line(client_socket)
+    
+    return response
 
     # TODO Step 4: implement this function
     # Hint: reuse read_one_line (copied from the tutorial-code)
@@ -154,13 +147,20 @@ def connect_to_server():
     # Hint: send the sync command according to the protocol
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
     # to the server
-    
+    send_command("sync","on")
     
     
     # TODO Step 4: wait for the servers response and find out whether the switch to SYNC mode was successful
     # Hint: implement the get_servers_response function first - it should wait for one response command from the server
     # and return the server's response (we expect "modeok" response here). This get_servers_response() function
     # will come in handy later as well - when we will want to check the server's response to login, messages etc
+    response = get_servers_response()
+    if response == "modeok":
+        print("Synchronous mode activated.")  #Forslag til tekst
+
+    elif response =="cmderr command not supported":     #Usikker på om de funka slik
+        print("Error: ", response)
+
     print("CONNECTION NOT IMPLEMENTED!")
 
 
