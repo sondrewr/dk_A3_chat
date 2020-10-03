@@ -109,15 +109,27 @@ def read_one_line(sock):
             message += character
     return message
 
-
+# Assume the read_one_line function works as intended, and reuse it
 def get_servers_response():
     """
     Wait until a response command is received from the server
     :return: The response of the server, the whole line as a single string
     """
+    response_received = False
+    message = ""
+    while not response_received:
+        character = sock.recv(1).decode()
+        if character == '\n':
+            response_received = True
+        elif character == '\r':
+            pass
+        else:
+            message += character
+    return message
+
     # TODO Step 4: implement this function
     # Hint: reuse read_one_line (copied from the tutorial-code)
-    return None
+    #return None
 
 
 def connect_to_server():
