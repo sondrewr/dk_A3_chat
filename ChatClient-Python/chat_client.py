@@ -27,8 +27,8 @@ current_state = "disconnected"  # The current state of the system
 must_run = True
 # Use this variable to create socket connection to the chat server
 # Note: the "type: socket" is a hint to PyCharm about the type of values we will assign to the variable
-#AF_INET designates the types of adresses the socket can communicate with, INET represent the IPv4
-#SOCK_STREAM means connection oriented TCP protocol.
+# AF_INET designates the types of adresses the socket can communicate with, INET represent the IPv4
+# SOCK_STREAM means connection oriented TCP protocol.
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  #type: socket
 
@@ -44,8 +44,9 @@ def quit_application():
 def send_command(command, arg):
     global client_socket
     
-    if command == "msg":    #Checks command, using argument as message thereafter encodes it and sends it along with the new line character.
-        if arg != "" or " ":
+    # Checks command, using argument as message thereafter encodes it and sends it along with the new line character
+    if command == "msg":    
+        if arg is not "" or " ":
          message = arg.encode()
          client_socket.send(message + "\n")
         else:
@@ -68,6 +69,14 @@ def send_command(command, arg):
             print("\"on\" or \"off\" only")
         
     elif command == "login":
+        client_socket.send(command + " "+ arg + "\n") 
+        get_servers_response()
+        
+        if get_servers_response == ("loginok\n"):
+            change_state("auth")
+            print("You are now logged in")
+        else:
+            print(get_servers_response())
         
     elif command == "privmsg":
         
@@ -90,7 +99,18 @@ def send_command(command, arg):
     # Hint: remember to send the newline at the end
     pass
 
-
+# Function for ease of use in function list
+def change_state(wantstate):
+    global current_state
+    global states
+    
+    if wantstate == ("disc"):
+        current_state = states[1]
+    elif wantstate == ("conn"):
+        current_state = states[2]
+    elif wantstate == ("auth"):
+        current_state = states[3]
+    
 def read_one_line(sock):
     """
     Read one line of text from a socket
@@ -127,9 +147,10 @@ def get_servers_response():
 
 def connect_to_server():
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
+    # Implemented globals to simplify changing server
     global client_socket
     global current_state
-    global SERVER_HOST
+    global SERVER_HOST  
     global TCP_PORT
     
     # TODO Step 1: implement connection establishment
@@ -137,9 +158,9 @@ def connect_to_server():
 
     try:
         client_socket.connect((SERVER_HOST,TCP_PORT))
-        current_state = states[2]
+        current_state = states[2] #Change state to connected
         
-    except socket.gaierror as err:  # gai = get adress info
+    except socket.gaierror as err:  # Exception handling for "Get Adress Info" failures
         print ("There was an error resolving the host" + str(err))
    
         
@@ -155,11 +176,11 @@ def connect_to_server():
     # and return the server's response (we expect "modeok" response here). This get_servers_response() function
     # will come in handy later as well - when we will want to check the server's response to login, messages etc
     response = get_servers_response()
-    if response == "modeok":
-        print("Synchronous mode activated.")  #Forslag til tekst
+    if response == "modeok\n":
+        print("Synchronous mode activated") 
 
-    elif response =="cmderr command not supported":     #Usikker på om de funka slik
-        print("Error: ", response)
+    elif response == "cmderr command not supported\n":
+        print("Error: " + response)
 
     print("CONNECTION NOT IMPLEMENTED!")
 
@@ -173,7 +194,7 @@ def disconnect_from_server():
     # Hint: close the socket, handle exceptions, update current_state accordingly
     try:
         client_socket.close
-        current_state = states[1]
+        current_state = states[1] #Change state to disconnected
     except socket.error as errd:
         print("There was an error disconnecting from the server" + errd)
     
@@ -181,6 +202,11 @@ def disconnect_from_server():
 
     pass
 
+def authorize():
+    """
+    docstring
+    """
+    pass
 
 """
 The list of available actions that the user can perform
@@ -214,7 +240,7 @@ available_actions = [
         # Hint: you probably want to change the state of the system: update value of current_state variable
         # Hint: remember to tell the function that you will want to use the global variable "current_state".
         # Hint: if the login was unsuccessful (loginerr returned), show the error message to the user
-        "function": None
+        "function": login
     },
     {
         "description": "Send a public message",
