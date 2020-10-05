@@ -48,6 +48,9 @@ def send_command(command, arguments):
     # TODO: Implement this (part of step 3)
     # Hint: concatenate the command and the arguments
     # Hint: remember to send the newline at the end
+
+    
+
     pass
 
 
@@ -88,10 +91,22 @@ def connect_to_server():
     # TODO Step 1: implement connection establishment
     # Hint: create a socket, connect, handle exceptions, then change current_state accordingly
 
+    try:
+        client_socket = socket(AF_INET, SOCK_STREAM)
+        client_socket.connect((SERVER_HOST, TCP_PORT))
+        current_state = "connected"
+
+    except OSError as e:
+        print("Error while connecting: ", e)
+        print("Status: ", current_state)
+
+
     # TODO Step 3: switch to sync mode
     # Hint: send the sync command according to the protocol
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
     # to the server
+
+
 
     # TODO Step 4: wait for the servers response and find out whether the switch to SYNC mode was successful
     # Hint: implement the get_servers_response function first - it should wait for one response command from the server
@@ -107,6 +122,15 @@ def disconnect_from_server():
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
     global client_socket
     global current_state
+
+    try:
+        client_socket.close()
+        current_state = "disconnected"
+        print("Disconnected from server")
+
+    except OSError as e:
+        print("Error while disconnecting: ", e)
+        print("Status: ", current_state)
     pass
 
 
