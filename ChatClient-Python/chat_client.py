@@ -160,7 +160,7 @@ def disconnect_from_server():
     # TODO Step 2: Implement disconnect
     # Hint: close the socket, handle exceptions, update current_state accordingly
     try:
-        client_socket.close
+        client_socket.close()
         change_state("disc") #Change state to disconnected
     except socket.error as errd:
         print("There was an error disconnecting from the server" + errd)
@@ -178,14 +178,13 @@ def login():
     """
     username: str = input("Enter username")
     send_command("login" + " " + username)
-    
-    get_servers_response
-    
-    if get_servers_response == ("loginok\n"):
+    servers_response = get_servers_response()
+
+    if servers_response == ("loginok\n"):
         print("Logged in")
         change_state("auth")
     else:
-        print(get_servers_response)
+        print(servers_response)
         
 def user_message():
     """
@@ -196,11 +195,17 @@ def user_message():
     """
     message: str = input("Enter message: ")
     send_command("msg",message)
-    
-    if get_servers_response == ("msgok\n"):
+    servers_response = get_servers_response()
+
+    if servers_response == ("msgok\n"):
         print("Delivered")
     else:
-        print(get_servers_response)
+        print(servers_response)
+
+
+def get_user_list():
+    send_command("users","")
+    print(get_servers_response())
 
 """
 The list of available actions that the user can perform
@@ -270,7 +275,7 @@ available_actions = [
         # Hint: use the provided chat client tools and analyze traffic with Wireshark to find out how
         # the user list is reported. Then implement a function which gets the user list from the server
         # and prints the list of usernames
-        "function": None
+        "function": get_user_list
     },
     {
         "description": "Get a joke",
