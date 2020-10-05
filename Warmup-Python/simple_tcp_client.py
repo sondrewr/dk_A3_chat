@@ -64,8 +64,15 @@ def send_request_to_server(request):
     # The "global" keyword is needed so that this function refers to the globally defined client_socket variable
     global client_socket
 
-    # TODO - implement this method
-    return False
+    try:
+        client_socket.send(request.encode())
+        return True
+
+    except IOError as e:
+        print("Error while sending request: ", e)
+        close_connection()
+        print("Connection closed")
+        return False
 
 
 def read_response_from_server():
@@ -77,7 +84,16 @@ def read_response_from_server():
     # The "global" keyword is needed so that this function refers to the globally defined client_socket variable
     global client_socket
 
-    return None
+    try:
+        server_message = client_socket.recv(1024)
+        response = server_message.decode()
+        return response
+
+    except IOError as e:
+        print("Error while reading response: ", e)
+        close_connection()
+        print("Connection closed")
+        return None
 
 
 def run_client_tests():
