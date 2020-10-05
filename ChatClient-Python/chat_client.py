@@ -41,64 +41,23 @@ def quit_application():
     global must_run
     must_run = False
 
-# TODO FULL REWORK OF send_command
-# shorten function and reuse it in function rather
-def send_command(command, arg):
-    global client_socket
+
+def send_command(cmd, arg):
     
-    # Checks command, using argument as message thereafter encodes it and sends it along with the new line character
-    if command == "msg":    
-        if arg is not "" or " ":
-         message = arg.encode()
-         client_socket.send(message + "\n")
-        else:
-            print("The message cannot be empty, please fill it inn")
-         
-    elif command == "sync":
-        if arg == "on":
-            client_socket.send("sync\n")
-        elif arg == "off":
-            client_socket.send("async\n")
-        else:
-            print("\"on\" or \"off\" only") 
-        
-    elif command == "async":
-        if arg == "on":
-            client_socket.send("async\n")
-        elif arg == "off":
-            client_socket.send("sync\n")
-        else:
-            print("\"on\" or \"off\" only")
-        
-    elif command == "login":
-        login()
-        client_socket.send(command + " "+ login() + "\n")
-        get_servers_response()
-        
-        if get_servers_response == ("loginok\n"):
-            change_state("auth")
-            print("You are now logged in")
-        else:
-            print(get_servers_response())
-        
-    elif command == "privmsg":
-        pass
-        
-    elif command == "inbox":
-        pass
-        
-    elif command == "help":
-        pass
-        
-    else:
-        print("Command not supported")
     """
     Send one command to the chat server.
     :param command: The command to send (login, sync, msg, ...(
     :param arguments: The arguments for the command as a string, or None if no arguments are needed
-        (username, message text, etc)
+    (username, message text, etc)
     :return:
     """
+    
+    global client_socket
+    # format parameter to lowercase to avoid potential command errors
+    commmand = cmd.lower()
+    full_argument = commmand + " " + arg + "\n" # Add space and newline character to get format "command argument\n"
+    return full_argument
+    
     
     # TODO: Implement this (part of step 3)
     # Hint: concatenate the command and the arguments
@@ -106,15 +65,16 @@ def send_command(command, arg):
     pass
 
 # Function for ease of use in function list
-def change_state(wantstate):
+# Might be unnecessary
+def change_state(want_state):
     global current_state
     global states
     
-    if wantstate == ("disc"):
+    if want_state == ("disc"):
         current_state = states[1]
-    elif wantstate == ("conn"):
+    elif want_state == ("conn"):
         current_state = states[2]
-    elif wantstate == ("auth"):
+    elif want_state == ("auth"):
         current_state = states[3]
     
 def read_one_line(sock):
@@ -188,7 +148,8 @@ def connect_to_server():
     elif response == "cmderr command not supported\n":
         print("Error: " + response)
 
-    print("CONNECTION NOT IMPLEMENTED!")
+    # Unnecessary?
+    # print("CONNECTION NOT IMPLEMENTED!")
 
 
 
@@ -213,7 +174,7 @@ def login():
     Sends user input to get desired username
     """
     username: str = input("Enter username")
-    return username
+    send_command("login" + " " + username)
 
 def user_message():
     """
