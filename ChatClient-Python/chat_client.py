@@ -124,7 +124,7 @@ def connect_to_server():
 
     try:
         client_socket.connect((SERVER_HOST,TCP_PORT))
-        current_state = states[2] #Change state to connected
+        change_state("conn") # Change state to connected
         
     except socket.gaierror as err:  # Exception handling for "Get Adress Info" failures
         print ("There was an error resolving the host" + str(err))
@@ -161,7 +161,7 @@ def disconnect_from_server():
     # Hint: close the socket, handle exceptions, update current_state accordingly
     try:
         client_socket.close
-        current_state = states[1] #Change state to disconnected
+        change_state("disc") #Change state to disconnected
     except socket.error as errd:
         print("There was an error disconnecting from the server" + errd)
     
@@ -172,17 +172,35 @@ def disconnect_from_server():
 def login():
     """
     Sends user input to get desired username
+    
+    Checks server response if username is taken
+    
     """
     username: str = input("Enter username")
     send_command("login" + " " + username)
-
+    
+    get_servers_response
+    
+    if get_servers_response == ("loginok\n"):
+        print("Logged in")
+        change_state("auth")
+    else:
+        print(get_servers_response)
+        
 def user_message():
     """
-    User inputs message and message gets returned to function
+    Prompts user input
+    
+    Then checks servers response for delivery confirmation
     :return:
     """
     message: str = input("Enter message: ")
-    return message
+    send_command("msg",message)
+    
+    if get_servers_response == ("msgok\n"):
+        print("Delivered")
+    else:
+        print(get_servers_response)
 
 """
 The list of available actions that the user can perform
@@ -225,7 +243,7 @@ available_actions = [
         # Hint: ask the user to input the message from the keyboard
         # Hint: you can reuse the send_command() function to send the "msg" command
         # Hint: remember to read the server's response: whether the message was successfully sent or not
-        "function": None
+        "function": user_message
     },
     {
         "description": "Send a private message",
