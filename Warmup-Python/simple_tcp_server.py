@@ -9,7 +9,7 @@ def run_server():
     print("Starting TCP server...")
 
     welcome_socket = socket(AF_INET, SOCK_STREAM)
-    welcome_socket.bin(("",1301))
+    welcome_socket.bind(("",1301))
     welcome_socket.listen(1)
     print("Server ready for client connections")
     need_to_run = True
@@ -21,6 +21,14 @@ def run_server():
         print("Client #%i connected" % client_id)
         message = connection_socket.recv(1024).decode()
         print("Client #%i: " % client_id, message)
+
+        message_content = []
+
+        while i < len(message):
+            message_content.append(i)
+            i++
+
+
         response = eval(message)
         connection_socket.send(str(response).encode())
 
