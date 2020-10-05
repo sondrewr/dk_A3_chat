@@ -3,6 +3,7 @@
 #################################################################################
 
 from socket import *
+import time
 
 
 # --------------------
@@ -45,14 +46,20 @@ def send_command(command, arguments):
     :return:
     """
     global client_socket
+
     # TODO: Implement this (part of step 3)
     # Hint: concatenate the command and the arguments
     # Hint: remember to send the newline at the end
 
-    
+    # MÅ VEL KANSKJE SJEKKE OM DE E GYLDIG FORMAT SÅNN EGENTLIG?
+    if arguments == "":
+        cmd_to_send = command + "\n"
+    else:
+        cmd_to_send = command + " " + arguments + "\n"
 
+    client_socket.send(cmd_to_send.encode())
+    get_servers_response()
     pass
-
 
 def read_one_line(sock):
     """
@@ -80,7 +87,11 @@ def get_servers_response():
     """
     # TODO Step 4: implement this function
     # Hint: reuse read_one_line (copied from the tutorial-code)
-    return None
+
+    server_response = ""
+    server_response = read_one_line(client_socket)
+    print("Response from server: ", server_response)
+    return server_response
 
 
 def connect_to_server():
@@ -106,13 +117,14 @@ def connect_to_server():
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
     # to the server
 
+    send_command("sync", "")
 
 
     # TODO Step 4: wait for the servers response and find out whether the switch to SYNC mode was successful
     # Hint: implement the get_servers_response function first - it should wait for one response command from the server
     # and return the server's response (we expect "modeok" response here). This get_servers_response() function
     # will come in handy later as well - when we will want to check the server's response to login, messages etc
-    print("CONNECTION NOT IMPLEMENTED!")
+
 
 
 def disconnect_from_server():
