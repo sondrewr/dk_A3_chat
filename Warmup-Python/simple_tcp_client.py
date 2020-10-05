@@ -6,11 +6,11 @@ import time
 from socket import *
 
 # Hostname of the server and TCP port number to use
-HOST = "datakomm.work"
+HOST = "localhost"
 PORT = 1301
 
-# The socket object (connection to the server and data excahgne will happen using this variable)
-client_socket = None
+# The socket object (connection to the server and data exchange will happen using this variable)
+client_socket = socket(AF_INET, SOCK_STREAM)
 
 
 def connect_to_server(host, port):
@@ -23,17 +23,19 @@ def connect_to_server(host, port):
     # The "global" keyword is needed so that this function refers to the globally defined client_socket variable
     global client_socket
 
-    client_socket = socket(AF_INET, SOCK_STREAM)
-
     # TODO - implement this method
     # Remember to catch all possible exceptions the socket can throw in case you have not worked with exceptions,
     # the syntax is as follows:
-    # try:
-    #     do_what_you_want_to_do_in_code()
-    # except IOError as e:
-    #     print("Error happened:", e)
-    #     what_to_do_in_case_of_error()
-    return False
+    try:
+        client_socket.connect((host, port))
+        need_to_run = True
+        return True
+
+    except IOError as e:
+        print("Error while connection to server: ", e)
+        close_connection()
+        print("Connection closed")
+        return False
 
 
 def close_connection():
@@ -44,8 +46,14 @@ def close_connection():
     # The "global" keyword is needed so that this function refers to the globally defined client_socket variable
     global client_socket
 
-    # TODO - implement this method
-    return False
+    try:
+        client_socket.close()
+        return True
+    except IOError as e:
+        print("Error while closing connection: ", e)
+        close_connection()
+        print("Connection closed")
+        return False
 
 
 def send_request_to_server(request):
