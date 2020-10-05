@@ -18,6 +18,7 @@ states = [
 TCP_PORT: int = 1300  # TCP port used for communication
 SERVER_HOST: str = "datakomm.work"  # Set this to either hostname (domain) or IP address of the chat server
 # Using provided server as stated in documentation
+# String will get converted to IP using the DNS
 
 # --------------------
 # State variables
@@ -40,7 +41,8 @@ def quit_application():
     global must_run
     must_run = False
 
-
+# TODO FULL REWORK OF send_command
+# shorten function and reuse it in function rather
 def send_command(command, arg):
     global client_socket
     
@@ -69,7 +71,8 @@ def send_command(command, arg):
             print("\"on\" or \"off\" only")
         
     elif command == "login":
-        client_socket.send(command + " "+ arg + "\n") 
+        login()
+        client_socket.send(command + " "+ login() + "\n")
         get_servers_response()
         
         if get_servers_response == ("loginok\n"):
@@ -79,10 +82,13 @@ def send_command(command, arg):
             print(get_servers_response())
         
     elif command == "privmsg":
+        pass
         
     elif command == "inbox":
+        pass
         
     elif command == "help":
+        pass
         
     else:
         print("Command not supported")
@@ -202,11 +208,20 @@ def disconnect_from_server():
 
     pass
 
-def authorize():
+def login():
     """
-    docstring
+    Sends user input to get desired username
     """
-    pass
+    username: str = input("Enter username")
+    return username
+
+def user_message():
+    """
+    User inputs message and message gets returned to function
+    :return:
+    """
+    message: str = input("Enter message: ")
+    return message
 
 """
 The list of available actions that the user can perform
