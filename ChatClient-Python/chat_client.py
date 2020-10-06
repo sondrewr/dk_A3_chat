@@ -31,7 +31,7 @@ must_run = True
 # AF_INET designates the types of adresses the socket can communicate with, INET represent the IPv4
 # SOCK_STREAM means connection oriented TCP protocol.
 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  #type: socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # type: socket
 
 
 def quit_application():
@@ -43,40 +43,41 @@ def quit_application():
 
 
 def send_command(cmd, arg):
-    
+
     """
     Send one command to the chat server.
-    :param command: The command to send (login, sync, msg, ...(
-    :param arguments: The arguments for the command as a string, or None if no arguments are needed
+    :param cmd: The command to send (login, sync, msg, ...(
+    :param arg: The arguments for the command as a string, or None if no arguments are needed
     (username, message text, etc)
     :return:
     """
-    
+
     global client_socket
-    # format parameter to lowercase to avoid potential command errors
-    commmand = cmd.lower()
-    full_argument = commmand + " " + arg + "\n" # Add space and newline character to get format "command argument\n"
-    return full_argument
-    
-    
+    command = cmd.lower()                       # format parameter to lowercase to avoid potential command errors
+    if arg is not None:
+        full_argument = command + " " + arg + "\n"  # Add space and newline character to get format "command argument\n"
+    else:
+        full_argument = command + "\n"
+    client_socket.send(full_argument.encode())
+
     # TODO: Implement this (part of step 3)
     # Hint: concatenate the command and the arguments
     # Hint: remember to send the newline at the end
-    pass
+
 
 # Function for ease of use in function list
 # Might be unnecessary
 def change_state(want_state):
     global current_state
     global states
-    
-    if want_state == ("disc"):
+
+    if want_state == "disc":
         current_state = states[1]
-    elif want_state == ("conn"):
+    elif want_state == "conn":
         current_state = states[2]
-    elif want_state == ("auth"):
+    elif want_state == "auth":
         current_state = states[3]
-    
+
 def read_one_line(sock):
     """
     Read one line of text from a socket
@@ -103,12 +104,12 @@ def get_servers_response():
     """
     global client_socket
     response = read_one_line(client_socket)
-    
+
     return response
 
     # TODO Step 4: implement this function
     # Hint: reuse read_one_line (copied from the tutorial-code)
-    #return None
+    # return None
 
 
 def connect_to_server():
@@ -116,95 +117,97 @@ def connect_to_server():
     # Implemented globals to simplify changing server
     global client_socket
     global current_state
-    global SERVER_HOST  
+    global SERVER_HOST
     global TCP_PORT
-    
+
     # TODO Step 1: implement connection establishment
     # Hint: create a socket, connect, handle exceptions, then change current_state accordingly
 
     try:
-        client_socket.connect((SERVER_HOST,TCP_PORT))
-        change_state("conn") # Change state to connected
-        
+        client_socket.connect((SERVER_HOST, TCP_PORT))
+        change_state("conn")  # Change state to connected
+        print("Connected to server!")
+
     except socket.gaierror as err:  # Exception handling for "Get Adress Info" failures
-        print ("There was an error resolving the host" + str(err))
-   
-        
+        print("There was an error resolving the host" + str(err))
+
+
     # TODO Step 3: switch to sync mode
     # Hint: send the sync command according to the protocol
     # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
     # to the server
-    send_command("sync","on")
-    
-    
+    send_command("sync",None)
+
+
     # TODO Step 4: wait for the servers response and find out whether the switch to SYNC mode was successful
     # Hint: implement the get_servers_response function first - it should wait for one response command from the server
     # and return the server's response (we expect "modeok" response here). This get_servers_response() function
     # will come in handy later as well - when we will want to check the server's response to login, messages etc
     response = get_servers_response()
-    if response == "modeok\n":
-        print("Synchronous mode activated") 
+    if response == "modeok":
+        print("Synchronous mode activated")             # "\n" is removed in read_one_line()
 
-    elif response == "cmderr command not supported\n":
+    elif response == "cmderr command not supported":
         print("Error: " + response)
 
     # Unnecessary?
     # print("CONNECTION NOT IMPLEMENTED!")
 
 
-
 def disconnect_from_server():
     global client_socket
-    global current_state  
-    
+    global current_state
+
     # TODO Step 2: Implement disconnect
     # Hint: close the socket, handle exceptions, update current_state accordingly
     try:
         client_socket.close()
-        change_state("disc") #Change state to disconnected
+        change_state("disc")  # Change state to disconnected
+        print("Disconnected from server")
     except socket.error as errd:
         print("There was an error disconnecting from the server" + errd)
-    
+
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
 
     pass
 
+
 def login():
     """
     Sends user input to get desired username
-    
+
     Checks server response if username is taken
-    
+
     """
-    username: str = input("Enter username")
-    send_command("login" + " " + username)
+    username: str = input("Enter username: ")
+    send_command("login",username)
     servers_response = get_servers_response()
 
-    if servers_response == ("loginok\n"):
+    if servers_response == "loginok":
         print("Logged in")
         change_state("auth")
     else:
         print(servers_response)
-        
+
 def user_message():
     """
     Prompts user input
-    
+
     Then checks servers response for delivery confirmation
     :return:
     """
     message: str = input("Enter message: ")
-    send_command("msg",message)
+    send_command("msg", message)
     servers_response = get_servers_response()
 
-    if servers_response == ("msgok\n"):
+    if servers_response == "msgok":
         print("Delivered")
     else:
         print(servers_response)
 
 
 def get_user_list():
-    send_command("users","")
+    send_command("users",None)
     print(get_servers_response())
 
 """
@@ -361,6 +364,7 @@ def perform_user_action(action_index):
         print("Invalid input, please choose a valid action")
     print()
     return None
+
 
 # Entrypoint for the application. In PyCharm you should see a green arrow on the left side.
 # By clicking it you run the application.
