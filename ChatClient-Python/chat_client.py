@@ -148,17 +148,36 @@ def disconnect_from_server():
     pass
 
 def login():
+    global current_state
+
     username = input("Enter your username: ")
     send_command("login", username)
-
     if get_servers_response() == "loginok":
         print("Successfully logged in, hello ", username)
         current_state = "authorized"
-    elif "loginerr" in get_servers_response():
-        print("Username taken")
     else:
         print("Failed to log in")
 
+def public_message():
+    message = input("Public chat: ")
+    send_command("msg", message)
+    if get_servers_response() == "msgok 1":
+        print("Chat message sent to all users")
+    else:
+        print("Failed to send chat message")
+
+def userlist():
+    send_command("users", "")
+    get_servers_response()
+
+    #TODO få til å printe som liste. Fjern response from server melding
+
+def private_message():
+    user = input("Enter a user to message: ")
+    msg = input("Type your message: ")
+    send_command("privmsg", user + " " + msg)
+    if get_servers_response() == "msgok 1":
+        print("Message sent!")
 
 
 """
@@ -203,7 +222,7 @@ available_actions = [
         # Hint: ask the user to input the message from the keyboard
         # Hint: you can reuse the send_command() function to send the "msg" command
         # Hint: remember to read the server's response: whether the message was successfully sent or not
-        "function": None
+        "function": public_message
     },
     {
         "description": "Send a private message",
@@ -212,7 +231,7 @@ available_actions = [
         # Hint: ask the user to input the recipient and message from the keyboard
         # Hint: you can reuse the send_command() function to send the "privmsg" command
         # Hint: remember to read the server's response: whether the message was successfully sent or not
-        "function": None
+        "function": private_message
     },
     {
         "description": "Read messages in the inbox",
@@ -230,7 +249,7 @@ available_actions = [
         # Hint: use the provided chat client tools and analyze traffic with Wireshark to find out how
         # the user list is reported. Then implement a function which gets the user list from the server
         # and prints the list of usernames
-        "function": None
+        "function": userlist
     },
     {
         "description": "Get a joke",
