@@ -42,7 +42,7 @@ def quit_application():
     must_run = False
 
 
-def send_command(cmd, arg):
+def send_command(cmd, arg, ext):
 
     """
     Send one command to the chat server.
@@ -53,11 +53,14 @@ def send_command(cmd, arg):
     """
 
     global client_socket
-    command = cmd.lower()                       # format parameter to lowercase to avoid potential command errors
-    if arg is not None:
+    command = cmd.lower()                           # format parameter to lowercase to avoid potential command errors
+    if arg is not None and ext is None:
         full_argument = command + " " + arg + "\n"  # Add space and newline character to get format "command argument\n"
+    elif arg and ext is not None:
+        full_argument = command + " " + arg + " " + ext + "\n"
     else:
         full_argument = command + "\n"
+        
     client_socket.send(full_argument.encode())
 
     # TODO: Implement this (part of step 3)
@@ -169,8 +172,6 @@ def disconnect_from_server():
 
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
 
-    pass
-
 
 def login():
     """
@@ -207,9 +208,20 @@ def user_message():
 
 
 def get_user_list():
+    """
+    Tells server to send active user list
+    """
     send_command("users",None)
     print(get_servers_response())
 
+def private_user_message():
+    """
+    User inputs recipient and then message
+    """
+    reciever = input("Enter reciever: ")
+    message = input("Enter message: ")
+    
+    send_command("privmsg",
 """
 The list of available actions that the user can perform
 Each action is a dictionary with the following fields:
