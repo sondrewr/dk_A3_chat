@@ -221,7 +221,7 @@ def private_user_message():
     reciever = input("Enter reciever: ")
     message = input("Enter message: ")
     
-    send_command("privmsg",
+    send_command("privmsg",)
 """
 The list of available actions that the user can perform
 Each action is a dictionary with the following fields:
