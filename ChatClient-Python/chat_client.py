@@ -225,6 +225,7 @@ def login():
     else:
         print(get_servers_response)
 
+
 def user_message():
     """
     Prompts user input and then checks servers response for delivery confirmation
@@ -236,6 +237,14 @@ def user_message():
         print("Delivered")
     else:
         print(get_servers_response)
+        
+        
+def inbox():
+    """
+    Call for the server inbox
+    """
+    send_command("inbox",None)
+    print(get_servers_response())
 
 
 def get_user_list():
@@ -244,6 +253,7 @@ def get_user_list():
     """
     send_command("users",None)
     print(get_server_list_response())
+
 
 def private_user_message():
     """
@@ -254,6 +264,7 @@ def private_user_message():
     full_message = reciever + " " + message
     
     send_command("privmsg",full_message)
+    
     
 """
 The list of available actions that the user can perform
@@ -314,7 +325,7 @@ available_actions = [
         # Hint: send the inbox command, find out how many messages there are. Then parse messages
         # one by one: find if it is a private or public message, who is the sender. Print this
         # information in a user friendly way
-        "function": None
+        "function": inbox
     },
     {
         "description": "See list of users",
