@@ -180,11 +180,12 @@ def login():
     Checks server response if username is taken
 
     """
-    username: str = input("Enter username: ")
-    send_command("login",username)
-    servers_response = get_servers_response()
-
-    if servers_response == "loginok":
+    username: str = input("Enter username")
+    send_command("login" + " " + username)
+    
+    get_servers_response()
+    
+    if get_servers_response == ("loginok\n"):
         print("Logged in")
         change_state("auth")
     else:
@@ -198,10 +199,9 @@ def user_message():
     :return:
     """
     message: str = input("Enter message: ")
-    send_command("msg", message)
-    servers_response = get_servers_response()
-
-    if servers_response == "msgok":
+    send_command("msg",message)
+    
+    if get_servers_response() == ("msgok\n"):
         print("Delivered")
     else:
         print(servers_response)
