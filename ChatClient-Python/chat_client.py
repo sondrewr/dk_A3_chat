@@ -3,7 +3,6 @@
 #################################################################################
 
 from socket import *
-import time
 
 
 # --------------------
@@ -58,7 +57,6 @@ def send_command(command, arguments):
         cmd_to_send = command + " " + arguments + "\n"
 
     client_socket.send(cmd_to_send.encode())
-    get_servers_response()
     pass
 
 def read_one_line(sock):
@@ -125,6 +123,10 @@ def connect_to_server():
     # and return the server's response (we expect "modeok" response here). This get_servers_response() function
     # will come in handy later as well - when we will want to check the server's response to login, messages etc
 
+    if get_servers_response() == "modeok":
+        print("Successfully switched to sync mode")
+    else:
+        print("Could not switch to sync mode")
 
 
 def disconnect_from_server():
@@ -144,6 +146,19 @@ def disconnect_from_server():
         print("Error while disconnecting: ", e)
         print("Status: ", current_state)
     pass
+
+def login():
+    username = input("Enter your username: ")
+    send_command("login", username)
+
+    if get_servers_response() == "loginok":
+        print("Successfully logged in, hello ", username)
+        current_state = "authorized"
+    elif "loginerr" in get_servers_response():
+        print("Username taken")
+    else:
+        print("Failed to log in")
+
 
 
 """
@@ -178,8 +193,9 @@ available_actions = [
         # Hint: you probably want to change the state of the system: update value of current_state variable
         # Hint: remember to tell the function that you will want to use the global variable "current_state".
         # Hint: if the login was unsuccessful (loginerr returned), show the error message to the user
-        "function": None
+        "function": login
     },
+
     {
         "description": "Send a public message",
         "valid_states": ["connected", "authorized"],
