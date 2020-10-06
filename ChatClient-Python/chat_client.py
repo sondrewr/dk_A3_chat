@@ -170,7 +170,7 @@ def userlist():
     send_command("users", "")
     get_servers_response()
 
-    #TODO få til å printe som liste. Fjern response from server melding
+    #TODO få til å printe som liste. Fjern response from server melding, de va stygt
 
 def private_message():
     user = input("Enter a user to message: ")
@@ -179,6 +179,17 @@ def private_message():
     if get_servers_response() == "msgok 1":
         print("Message sent!")
 
+
+def read_inbox():
+    send_command("inbox", "")
+    get_servers_response()
+
+#TODO Les inbox uten read_one_line i get_servers_response sida den bere returnera ei linje
+
+def joke():
+    send_command("joke", "")
+    get_servers_response()
+    #TODO print finare pls
 
 """
 The list of available actions that the user can perform
@@ -240,7 +251,7 @@ available_actions = [
         # Hint: send the inbox command, find out how many messages there are. Then parse messages
         # one by one: find if it is a private or public message, who is the sender. Print this
         # information in a user friendly way
-        "function": None
+        "function": read_inbox
     },
     {
         "description": "See list of users",
@@ -257,7 +268,7 @@ available_actions = [
         # TODO - optional step - implement the joke fetching from the server.
         # Hint: this part is not described in the protocol. But the command is simple. Try to find
         # out how it works ;)
-        "function": None
+        "function": joke
     },
     {
         "description": "Quit the application",
