@@ -42,7 +42,7 @@ def quit_application():
     must_run = False
 
 
-def send_command(cmd, arg, ext):
+def send_command(cmd, arg):
 
     """
     Send one command to the chat server.
@@ -54,10 +54,8 @@ def send_command(cmd, arg, ext):
 
     global client_socket
     command = cmd.lower()                           # format parameter to lowercase to avoid potential command errors
-    if arg is not None and ext is None:
+    if arg is not None:
         full_argument = command + " " + arg + "\n"  # Add space and newline character to get format "command argument\n"
-    elif arg and ext is not None:
-        full_argument = command + " " + arg + " " + ext + "\n"
     else:
         full_argument = command + "\n"
         
@@ -81,6 +79,7 @@ def change_state(want_state):
     elif want_state == "auth":
         current_state = states[3]
 
+
 def read_one_line(sock):
     """
     Read one line of text from a socket
@@ -98,6 +97,44 @@ def read_one_line(sock):
         else:
             message += character
     return message
+
+
+def read_one_list(sock):
+    """
+    Duplicate of read_one_line to be used for userlists and maybe inbox
+    """
+    newline_received = False
+    message = ""
+    space_counter:int = 0
+    
+    while not newline_received:
+        character = sock.recv(1).decode()
+        if character == '\n':
+            newline_received = True
+        elif character == '\r':
+            pass
+        elif character == " ":
+            space_counter += 1
+            message += " "
+        elif space_counter == 5:    # Change number to adjust number of usernames per line
+            message += "\n"
+            message += character
+            space_counter = 0
+        else:
+            message += character
+    return message
+
+
+def get_server_list_response():
+    """
+    Wait until a response command is received from the server
+    :return: The response of the server, the whole line as a single string
+    """
+    global client_socket
+    response = read_one_list(client_socket)
+
+    return response
+
 
 # Assume the read_one_line function works as intended, and reuse it
 def get_servers_response():
@@ -153,9 +190,6 @@ def connect_to_server():
     elif response == "cmderr command not supported":
         print("Error: " + response)
 
-    # Unnecessary?
-    # print("CONNECTION NOT IMPLEMENTED!")
-
 
 def disconnect_from_server():
     global client_socket
@@ -185,7 +219,7 @@ def login():
     
     get_servers_response()
     
-    if get_servers_response == ("loginok\n"):
+    if get_servers_response == ("loginok"):
         print("Logged in")
         change_state("auth")
     else:
@@ -193,15 +227,12 @@ def login():
 
 def user_message():
     """
-    Prompts user input
-
-    Then checks servers response for delivery confirmation
-    :return:
+    Prompts user input and then checks servers response for delivery confirmation
     """
     message: str = input("Enter message: ")
     send_command("msg",message)
     
-    if get_servers_response() == ("msgok\n"):
+    if get_servers_response() == ("msgok"):
         print("Delivered")
     else:
         print(get_servers_response)
@@ -212,7 +243,7 @@ def get_user_list():
     Tells server to send active user list
     """
     send_command("users",None)
-    print(get_servers_response())
+    print(get_server_list_response())
 
 def private_user_message():
     """
@@ -220,8 +251,9 @@ def private_user_message():
     """
     reciever = input("Enter reciever: ")
     message = input("Enter message: ")
+    full_message = reciever + " " + message
     
-    send_command("privmsg",reciever,message)
+    send_command("privmsg",full_message)
     
 """
 The list of available actions that the user can perform
