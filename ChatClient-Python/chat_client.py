@@ -73,11 +73,11 @@ def change_state(want_state):
     global states
 
     if want_state == "disc":
-        current_state = states[1]
+        current_state = states[0]
     elif want_state == "conn":
-        current_state = states[2]
+        current_state = states[1]
     elif want_state == "auth":
-        current_state = states[3]
+        current_state = states[2]
 
 
 def read_one_line(sock):
@@ -106,7 +106,7 @@ def read_one_list(sock):
     newline_received = False
     message = ""
     space_counter:int = 0
-    
+
     while not newline_received:
         character = sock.recv(1).decode()
         if character == '\n':
@@ -115,14 +115,17 @@ def read_one_list(sock):
             pass
         elif character == " ":
             space_counter += 1
-            message += " "
-        elif space_counter == 5:    # Change number to adjust number of usernames per line
+            message += "\t"
+        elif space_counter == 4:    # Change number to adjust number of usernames per line
             message += "\n"
             message += character
             space_counter = 0
         else:
             message += character
+            
     return message
+                        
+
 
 
 def get_server_list_response():
@@ -214,12 +217,11 @@ def login():
     Checks server response if username is taken
 
     """
-    username: str = input("Enter username")
-    send_command("login" + " " + username)
+    username: str = input("Enter username: ")
+    send_command("login",username)
+    response = get_servers_response()
     
-    get_servers_response()
-    
-    if get_servers_response == ("loginok"):
+    if response == ("loginok"):
         print("Logged in")
         change_state("auth")
     else:
