@@ -189,7 +189,7 @@ def login():
         print("Logged in")
         change_state("auth")
     else:
-        print(servers_response)
+        print(get_servers_response)
 
 def user_message():
     """
@@ -204,7 +204,7 @@ def user_message():
     if get_servers_response() == ("msgok\n"):
         print("Delivered")
     else:
-        print(servers_response)
+        print(get_servers_response)
 
 
 def get_user_list():
@@ -221,7 +221,8 @@ def private_user_message():
     reciever = input("Enter reciever: ")
     message = input("Enter message: ")
     
-    send_command("privmsg",)
+    send_command("privmsg",reciever,message)
+    
 """
 The list of available actions that the user can perform
 Each action is a dictionary with the following fields:
@@ -272,7 +273,7 @@ available_actions = [
         # Hint: ask the user to input the recipient and message from the keyboard
         # Hint: you can reuse the send_command() function to send the "privmsg" command
         # Hint: remember to read the server's response: whether the message was successfully sent or not
-        "function": None
+        "function": private_user_message
     },
     {
         "description": "Read messages in the inbox",
