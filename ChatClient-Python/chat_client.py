@@ -254,60 +254,31 @@ available_actions = [
     {
         "description": "Authorize (log in)",
         "valid_states": ["connected", "authorized"],
-        # TODO Step 5 - implement login
-        # Hint: you will probably want to create a new function (call it login(), or authorize()) and
-        # reference that function here.
-        # Hint: you can ask the user to enter the username with input("Enter username: ") function.
-        # Hint: the login function must be above this line, otherwise the available_actions will complain that it can't
-        # find the function
-        # Hint: you can reuse the send_command() function to send the "login" command
-        # Hint: you probably want to change the state of the system: update value of current_state variable
-        # Hint: remember to tell the function that you will want to use the global variable "current_state".
-        # Hint: if the login was unsuccessful (loginerr returned), show the error message to the user
         "function": login
     },
     {
         "description": "Send a public message",
         "valid_states": ["connected", "authorized"],
-        # TODO Step 6 - implement sending a public message
-        # Hint: ask the user to input the message from the keyboard
-        # Hint: you can reuse the send_command() function to send the "msg" command
-        # Hint: remember to read the server's response: whether the message was successfully sent or not
         "function": user_message
     },
     {
         "description": "Send a private message",
         "valid_states": ["authorized"],
-        # TODO Step 8 - implement sending a private message
-        # Hint: ask the user to input the recipient and message from the keyboard
-        # Hint: you can reuse the send_command() function to send the "privmsg" command
-        # Hint: remember to read the server's response: whether the message was successfully sent or not
         "function": private_user_message
     },
     {
         "description": "Read messages in the inbox",
         "valid_states": ["connected", "authorized"],
-        # TODO Step 9 - implement reading messages from the inbox.
-        # Hint: send the inbox command, find out how many messages there are. Then parse messages
-        # one by one: find if it is a private or public message, who is the sender. Print this
-        # information in a user friendly way
         "function": inbox
     },
     {
         "description": "See list of users",
         "valid_states": ["connected", "authorized"],
-        # TODO Step 7 - Implement getting the list of currently connected users
-        # Hint: use the provided chat client tools and analyze traffic with Wireshark to find out how
-        # the user list is reported. Then implement a function which gets the user list from the server
-        # and prints the list of usernames
         "function": get_user_list
     },
     {
         "description": "Get a joke",
         "valid_states": ["connected", "authorized"],
-        # TODO - optional step - implement the joke fetching from the server.
-        # Hint: this part is not described in the protocol. But the command is simple. Try to find
-        # out how it works ;)
         "function": None
     },
     {
