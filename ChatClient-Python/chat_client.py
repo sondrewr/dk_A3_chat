@@ -250,7 +250,8 @@ def get_joke():
     Gets a joke from the server
     """
     send_command("joke", None)
-    joke = get_servers_response()
+    response = get_servers_response()
+    joke = response[5:]
     print(joke)
 
 """
