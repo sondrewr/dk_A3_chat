@@ -26,11 +26,9 @@ SERVER_HOST: str = "datakomm.work"  # Set this to either hostname (domain) or IP
 current_state = "disconnected"  # The current state of the system
 # When this variable will be set to false, the application will stop
 must_run = True
-# Use this variable to create socket connection to the chat server
-# Note: the "type: socket" is a hint to PyCharm about the type of values we will assign to the variable
+
 # AF_INET designates the types of adresses the socket can communicate with, INET represent the IPv4
 # SOCK_STREAM means connection oriented TCP protocol.
-
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # type: socket
 
 
@@ -43,7 +41,6 @@ def quit_application():
 
 
 def send_command(cmd, arg):
-
     """
     Send one command to the chat server.
     :param cmd: The command to send (login, sync, msg, ...(
@@ -51,23 +48,15 @@ def send_command(cmd, arg):
     (username, message text, etc)
     :return:
     """
-
     global client_socket
-    command = cmd.lower()                           # format parameter to lowercase to avoid potential command errors
     if arg is not None:
-        full_argument = command + " " + arg + "\n"  # Add space and newline character to get format "command argument\n"
+        full_argument = cmd + " " + arg + "\n"  # Add space and newline character to get format "command argument\n"
     else:
-        full_argument = command + "\n"
+        full_argument = cmd + "\n"
         
     client_socket.send(full_argument.encode())
 
-    # TODO: Implement this (part of step 3)
-    # Hint: concatenate the command and the arguments
-    # Hint: remember to send the newline at the end
 
-
-# Function for ease of use in function list
-# Might be unnecessary
 def change_state(want_state):
     global current_state
     global states
@@ -126,8 +115,6 @@ def read_one_list(sock):
     return message
                         
 
-
-
 def get_server_list_response():
     """
     Wait until a response command is received from the server
@@ -150,10 +137,6 @@ def get_servers_response():
 
     return response
 
-    # TODO Step 4: implement this function
-    # Hint: reuse read_one_line (copied from the tutorial-code)
-    # return None
-
 
 def connect_to_server():
     # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
@@ -163,8 +146,6 @@ def connect_to_server():
     global SERVER_HOST
     global TCP_PORT
 
-    # TODO Step 1: implement connection establishment
-    # Hint: create a socket, connect, handle exceptions, then change current_state accordingly
 
     try:
         client_socket.connect((SERVER_HOST, TCP_PORT))
@@ -174,18 +155,8 @@ def connect_to_server():
     except socket.gaierror as err:  # Exception handling for "Get Adress Info" failures
         print("There was an error resolving the host" + str(err))
 
-
-    # TODO Step 3: switch to sync mode
-    # Hint: send the sync command according to the protocol
-    # Hint: create function send_command(command, arguments) which you will use to send this and all other commands
-    # to the server
     send_command("sync",None)
 
-
-    # TODO Step 4: wait for the servers response and find out whether the switch to SYNC mode was successful
-    # Hint: implement the get_servers_response function first - it should wait for one response command from the server
-    # and return the server's response (we expect "modeok" response here). This get_servers_response() function
-    # will come in handy later as well - when we will want to check the server's response to login, messages etc
     response = get_servers_response()
     if response == "modeok":
         print("Synchronous mode activated")             # "\n" is removed in read_one_line()
@@ -197,9 +168,7 @@ def connect_to_server():
 def disconnect_from_server():
     global client_socket
     global current_state
-
-    # TODO Step 2: Implement disconnect
-    # Hint: close the socket, handle exceptions, update current_state accordingly
+    
     try:
         client_socket.close()
         change_state("disc")  # Change state to disconnected
@@ -207,15 +176,10 @@ def disconnect_from_server():
     except socket.error as errd:
         print("There was an error disconnecting from the server" + errd)
 
-    # Must have these two lines, otherwise the function will not "see" the global variables that we will change here
-
 
 def login():
     """
-    Sends user input to get desired username
-
-    Checks server response if username is taken
-
+    Prompts user to input username :str, server prints response
     """
     username: str = input("Enter username: ")
     send_command("login",username)
@@ -246,7 +210,7 @@ def inbox():
     Call for the server inbox
     """
     send_command("inbox",None)
-    print(get_servers_response())
+    print(get_server_list_response())
 
 
 def get_user_list():
@@ -266,7 +230,7 @@ def private_user_message():
     full_message = reciever + " " + message
     
     send_command("privmsg",full_message)
-    
+
     
 """
 The list of available actions that the user can perform
