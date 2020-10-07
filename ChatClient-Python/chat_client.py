@@ -148,18 +148,19 @@ def connect_to_server():
         client_socket.connect((SERVER_HOST, TCP_PORT))
         change_state("conn")  # Change state to connected
         print("Connected to server!")
+        send_command("sync", None)
+        response = get_servers_response()
+
+        if response == "modeok":
+            print("Synchronous mode activated")  # "\n" is removed in read_one_line()
+
+        elif response == "cmderr command not supported":
+            print("Error: " + response)
 
     except OSError as err:
         print("There was an error: " + str(err))
 
-    send_command("sync", None)
 
-    response = get_servers_response()
-    if response == "modeok":
-        print("Synchronous mode activated")  # "\n" is removed in read_one_line()
-
-    elif response == "cmderr command not supported":
-        print("Error: " + response)
 
 
 def disconnect_from_server():
