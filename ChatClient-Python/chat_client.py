@@ -5,7 +5,6 @@
 import socket
 import sys
 
-
 # --------------------
 # Constants
 # --------------------
@@ -53,7 +52,7 @@ def send_command(cmd, arg):
         full_argument = cmd + " " + arg + "\n"  # Add space and newline character to get format "command argument\n"
     else:
         full_argument = cmd + "\n"
-        
+
     client_socket.send(full_argument.encode())
 
 
@@ -94,7 +93,7 @@ def read_one_list(sock):
     """
     newline_received = False
     message = ""
-    space_counter:int = 0
+    space_counter: int = 0
 
     while not newline_received:
         character = sock.recv(1).decode()
@@ -105,15 +104,15 @@ def read_one_list(sock):
         elif character == " ":
             space_counter += 1
             message += "\t"
-        elif space_counter == 4:    # Change number to adjust number of usernames per line
+        elif space_counter == 4:  # Change number to adjust number of usernames per line
             message += "\n"
             message += character
             space_counter = 0
         else:
             message += character
-            
+
     return message
-                        
+
 
 def get_server_list_response():
     """
@@ -146,7 +145,6 @@ def connect_to_server():
     global SERVER_HOST
     global TCP_PORT
 
-
     try:
         client_socket.connect((SERVER_HOST, TCP_PORT))
         change_state("conn")  # Change state to connected
@@ -155,11 +153,11 @@ def connect_to_server():
     except socket.gaierror as err:  # Exception handling for "Get Adress Info" failures
         print("There was an error resolving the host" + str(err))
 
-    send_command("sync",None)
+    send_command("sync", None)
 
     response = get_servers_response()
     if response == "modeok":
-        print("Synchronous mode activated")             # "\n" is removed in read_one_line()
+        print("Synchronous mode activated")  # "\n" is removed in read_one_line()
 
     elif response == "cmderr command not supported":
         print("Error: " + response)
@@ -168,7 +166,7 @@ def connect_to_server():
 def disconnect_from_server():
     global client_socket
     global current_state
-    
+
     try:
         client_socket.close()
         change_state("disc")  # Change state to disconnected
@@ -182,9 +180,9 @@ def login():
     Prompts user to input username :str, server prints response
     """
     username: str = input("Enter username: ")
-    send_command("login",username)
+    send_command("login", username)
     response = get_servers_response()
-    
+
     if response == ("loginok"):
         print("Logged in")
         change_state("auth")
@@ -197,20 +195,20 @@ def user_message():
     Prompts user input and then checks servers response for delivery confirmation
     """
     message: str = input("Enter message: ")
-    send_command("msg",message)
+    send_command("msg", message)
     response = get_servers_response()
-    
+
     if response[:5] == ("msgok"):
         print("Delivered")
     else:
         print(response)
-        
-        
+
+
 def inbox():
     """
     Call for the server inbox
     """
-    send_command("inbox",None)
+    send_command("inbox", None)
     response = get_servers_response()
     if response == "inbox 0":
         messages = "Inbox is empty"
@@ -227,7 +225,7 @@ def get_user_list():
     """
     Tells server to send active user list
     """
-    send_command("users",None)
+    send_command("users", None)
     print(get_server_list_response())
 
 
@@ -238,15 +236,23 @@ def private_user_message():
     reciever = input("Enter reciever: ")
     message = input("Enter message: ")
     full_message = reciever + " " + message
-    
-    send_command("privmsg",full_message)
+
+    send_command("privmsg", full_message)
     response = get_servers_response()
 
     if response[:5] == ("msgok"):
         print("Delivered")
     else:
         print(response)
-    
+
+def get_joke():
+    """
+    Gets a joke from the server
+    """
+    send_command("joke", None)
+    joke = get_servers_response()
+    print(joke)
+
 """
 The list of available actions that the user can perform
 Each action is a dictionary with the following fields:
@@ -294,7 +300,7 @@ available_actions = [
     {
         "description": "Get a joke",
         "valid_states": ["connected", "authorized"],
-        "function": None
+        "function": get_joke
     },
     {
         "description": "Quit the application",
