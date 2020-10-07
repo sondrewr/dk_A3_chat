@@ -198,11 +198,12 @@ def user_message():
     """
     message: str = input("Enter message: ")
     send_command("msg",message)
+    response = get_servers_response()
     
-    if get_servers_response() == ("msgok"):
+    if response[:5] == ("msgok"):
         print("Delivered")
     else:
-        print(get_servers_response)
+        print(response)
         
         
 def inbox():
@@ -210,7 +211,16 @@ def inbox():
     Call for the server inbox
     """
     send_command("inbox",None)
-    print(get_server_list_response())
+    response = get_servers_response()
+    if response == "inbox 0":
+        messages = "Inbox is empty"
+    else:
+        number_of_messages = int(response[5:])
+        messages = ""
+        for i in range(number_of_messages):
+            messages += get_servers_response() + "\n"
+
+    print(messages)
 
 
 def get_user_list():
@@ -230,7 +240,12 @@ def private_user_message():
     full_message = reciever + " " + message
     
     send_command("privmsg",full_message)
+    response = get_servers_response()
 
+    if response[:5] == ("msgok"):
+        print("Delivered")
+    else:
+        print(response)
     
 """
 The list of available actions that the user can perform
