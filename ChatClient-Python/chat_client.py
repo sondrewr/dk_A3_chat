@@ -3,7 +3,6 @@
 #################################################################################
 
 import socket
-import sys
 
 # --------------------
 # Constants
@@ -89,7 +88,7 @@ def read_one_line(sock):
 
 def read_one_list(sock):
     """
-    Duplicate of read_one_line to be used for userlists and maybe inbox
+    Duplicate of read_one_line to be used for userlists
     """
     newline_received = False
     message = ""
@@ -150,8 +149,8 @@ def connect_to_server():
         change_state("conn")  # Change state to connected
         print("Connected to server!")
 
-    except socket.gaierror as err:  # Exception handling for "Get Adress Info" failures
-        print("There was an error resolving the host" + str(err))
+    except OSError as err:
+        print("There was an error: " + str(err))
 
     send_command("sync", None)
 
@@ -187,7 +186,7 @@ def login():
         print("Logged in")
         change_state("auth")
     else:
-        print(get_servers_response)
+        print(response)
 
 
 def user_message():
@@ -245,7 +244,7 @@ def private_user_message():
     else:
         print(response)
 
-        
+
 def get_joke():
     """
     Gets a joke from the server
