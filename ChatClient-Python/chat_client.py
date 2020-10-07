@@ -245,6 +245,7 @@ def private_user_message():
     else:
         print(response)
 
+        
 def get_joke():
     """
     Gets a joke from the server
